@@ -63,11 +63,14 @@ const Durak = () => {
     const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'a']
     const images = [S2, S3, S4, S5, S6, S7, S8, S9, S10, SJ, SQ, SK, SA, D2, D3, D4, D5, D6, D7, D8, D9, D10, DJ, DQ, DK, DA, H2, H3, H4, H5, H6, H7, H8, H9, H10, HJ, HQ, HK, HA, C2, C3, C4, C5, C6, C7, C8, C9, C10, CJ, CQ, CK, CA]
     const deck: card[] = []
+    const attack: card[] = []
+    const defend: card[] = []
+    const cardsInPlay: card[] = []
     let i = 0
     for (const suit of suits) {
         for (const value of values) {
-            ++i;
         deck.push({ suit, value, img: images[i]})
+        ++i;
         }
     }
     for (let i = deck.length - 1; i > 0; i--) {
@@ -89,20 +92,19 @@ const Durak = () => {
     while (player.cards.length < 6) {
         player.cards.push(drawCard())
     }
-
+    
     return (
         <div className='container'>
             <h1>help</h1>
             <div className="board">
-                
             </div>
             <div className="Hand">
-            <img className="card" src={drawCard().img} alt="" />
-            <img className="card" src={drawCard().img} alt="" />
-            <img className="card" src={drawCard().img} alt="" />
-            <img className="card" src={drawCard().img} alt="" />
-            <img className="card" src={drawCard().img} alt="" />
-            <img className="card" src={drawCard().img} alt="" />
+            <img className="card" src={player.cards[0].img} alt="" id="0" />
+            <img className="card" src={player.cards[1].img} alt="" id="1" />
+            <img className="card" src={player.cards[2].img} alt="" id="2" />
+            <img className="card" src={player.cards[3].img} alt="" id="3" />
+            <img className="card" src={player.cards[4].img} alt="" id="4" />
+            <img className="card" src={player.cards[5].img} alt="" id="5" />
          </div>
         </div>
     );
