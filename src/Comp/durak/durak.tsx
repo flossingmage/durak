@@ -1,5 +1,6 @@
-import React from "react";
+import React from 'react';
 import "./durak.css";
+import cardBack from "../cards/back.png";
 import  C2 from "../cards/clubs_2.png";
 import  C3 from "../cards/clubs_3.png";
 import  C4 from "../cards/clubs_4.png";
@@ -55,7 +56,6 @@ import  SA from "../cards/spades_A.png";
 
 
 
-
 const Durak = () => {
     type card = { suit: string; value: string; img: string}
     type person = { cards: card[]; name: string}
@@ -65,7 +65,9 @@ const Durak = () => {
     const deck: card[] = []
     const attack: card[] = []
     const defend: card[] = []
-    const cardsInPlay: card[] = []
+    let cardsInPlay: card[] = []
+    const player: person = { cards: [], name: 'Kevin'}
+    
     let i = 0
     for (const suit of suits) {
         for (const value of values) {
@@ -84,27 +86,92 @@ const Durak = () => {
     const drawCard = () => {
         const drawnCard = deck[0]
         deck.splice(0, 1)
+        console.log("click")
         return drawnCard
+
     }
-    
-    const player: person = { cards: [], name: 'Kevin'}
+    const trump = drawCard();
 
     while (player.cards.length < 6) {
         player.cards.push(drawCard())
     }
-    
+    const refreshHand = () => {
+        for (let i = 0; i < 6; i++) {
+            if (player.cards[i] === undefined) {
+                document.getElementById(i.toString()).src = undefined
+            }else{
+            document.getElementById(i.toString()).src = player.cards[i].img
+            }
+        }
+    }
+
+    const playCard = (e,card: card) => {
+        try {
+            cardsInPlay.push(card)
+            document.getElementById(`a${cardsInPlay.length - 1}`).src = cardsInPlay[cardsInPlay.length - 1].img
+            player.cards.splice(player.cards.indexOf(card), 1)
+            e.target.src = undefined;
+            refreshHand()
+        } catch (error) {
+            console.log(error)
+        }
+}
+
+    const refreshCards = () => {
+        for (let i = 0; i < 6; i++) {
+            cardsInPlay = [];
+            document.getElementById(`a${i}`).src = undefined
+            if (player.cards[i] === undefined) {
+                if (deck.length > 0) {
+                player.cards.splice(i, 1, drawCard())
+            document.getElementById(i.toString()).src = player.cards[i].img
+                }
+            }
+        }
+    }
+    const attackButten = () => {
+        if (cardsInPlay.length < 6) {
+        const temp = drawCard()
+        cardsInPlay.push(temp)
+        document.getElementById(`a${cardsInPlay.length-1}`).src = temp.img
+        attack.push(temp)
+        console.log(temp)
+        refreshHand()
+        }
+    }
+
+    console.log(player.cards)
     return (
         <div className='container'>
             <h1>help</h1>
             <div className="board">
+                <button className="attack" onClick={() => attackButten()}>attack</button>
+            <img src={trump.img} alt="" className="trump"/>
+                <img className='deck' src={cardBack} alt="" onClick={() => refreshCards()} />
+                <div className="attack">
+                    <img className="card" src={cardsInPlay[0]?.img} alt="" id="a0"/>
+                    <img className="card" src={cardsInPlay[1]?.img} alt="" id="a1"/>
+                    <img className="card" src={cardsInPlay[2]?.img} alt="" id="a2"/>
+                    <img className="card" src={cardsInPlay[3]?.img} alt="" id="a3"/>
+                    <img className="card" src={cardsInPlay[4]?.img} alt="" id="a4"/>
+                    <img className="card" src={cardsInPlay[5]?.img} alt="" id="a5"/>
+                </div>
+                <div className="defend">
+                    <img className="card" src={cardsInPlay[0]?.img} alt="" id="d0"/>
+                    <img className="card" src={cardsInPlay[1]?.img} alt="" id="d1"/>
+                    <img className="card" src={cardsInPlay[2]?.img} alt="" id="d2"/>
+                    <img className="card" src={cardsInPlay[3]?.img} alt="" id="d3"/>
+                    <img className="card" src={cardsInPlay[4]?.img} alt="" id="d4"/>
+                    <img className="card" src={cardsInPlay[5]?.img} alt="" id="d5"/>
+                </div>
             </div>
             <div className="Hand">
-            <img className="card" src={player.cards[0].img} alt="" id="0" />
-            <img className="card" src={player.cards[1].img} alt="" id="1" />
-            <img className="card" src={player.cards[2].img} alt="" id="2" />
-            <img className="card" src={player.cards[3].img} alt="" id="3" />
-            <img className="card" src={player.cards[4].img} alt="" id="4" />
-            <img className="card" src={player.cards[5].img} alt="" id="5" />
+            <img className="card" src={player.cards[0].img} alt="" id="0" onClick={(e) => playCard(e,player.cards[0])} />
+            <img className="card" src={player.cards[1].img} alt="" id="1" onClick={(e) => playCard(e,player.cards[1])} />
+            <img className="card" src={player.cards[2].img} alt="" id="2" onClick={(e) => playCard(e,player.cards[2])} />
+            <img className="card" src={player.cards[3].img} alt="" id="3" onClick={(e) => playCard(e,player.cards[3])} />
+            <img className="card" src={player.cards[4].img} alt="" id="4" onClick={(e) => playCard(e,player.cards[4])} />
+            <img className="card" src={player.cards[5].img} alt="" id="5" onClick={(e) => playCard(e,player.cards[5])} />
          </div>
         </div>
     );

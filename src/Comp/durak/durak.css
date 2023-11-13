@@ -1,7 +1,28 @@
 .container{
     text-align: center;
 }
-
 .card{
     margin: 5px;
+    height: 150px;
+    width: 100px;
+}
+.deck{
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    height: 150px;
+    width: 100px;
+}   
+.Hand{
+    position: absolute;
+    bottom: 40px;
+    left: 470px;
+}
+.trump{
+    position: absolute;
+    top: 45px;
+    left: 75px;
+    height: 150px;
+    width: 100px;
+    rotate: 90deg;
 }
