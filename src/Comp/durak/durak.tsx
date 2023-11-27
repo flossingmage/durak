@@ -57,16 +57,17 @@ import  SA from "../cards/spades_A.png";
 
 
 const Durak = () => {
-    type card = { suit: string; value: string; img: string}
+    type card = { suit: string; value: number; img: string}
     type person = { cards: card[]; name: string}
     const suits = ['spades', 'diamonds', 'hearts', 'clubs']
-    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'a']
+    const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     const images = [S2, S3, S4, S5, S6, S7, S8, S9, S10, SJ, SQ, SK, SA, D2, D3, D4, D5, D6, D7, D8, D9, D10, DJ, DQ, DK, DA, H2, H3, H4, H5, H6, H7, H8, H9, H10, HJ, HQ, HK, HA, C2, C3, C4, C5, C6, C7, C8, C9, C10, CJ, CQ, CK, CA]
     const deck: card[] = []
-    const attack: card[] = []
-    const defend: card[] = []
     let cardsInPlay: card[] = []
+    let defend: card[] = []
+    let attack: card[] = []
     const player: person = { cards: [], name: 'Kevin'}
+    let attacker = false
     
     let i = 0
     for (const suit of suits) {
@@ -105,22 +106,45 @@ const Durak = () => {
         }
     }
 
-    const playCard = (e,card: card) => {
+    const playCard = (e,cardPlayed: card) => {
+        if (attacker === true) {
         try {
-            cardsInPlay.push(card)
-            document.getElementById(`a${cardsInPlay.length - 1}`).src = cardsInPlay[cardsInPlay.length - 1].img
-            player.cards.splice(player.cards.indexOf(card), 1)
+            cardsInPlay.push(cardPlayed)
+            attack.push(cardPlayed)
+            document.getElementById(`a${attack.length - 1}`).src = attack[attack.length - 1].img
+            player.cards.splice(player.cards.indexOf(cardPlayed), 1)
             e.target.src = undefined;
             refreshHand()
         } catch (error) {
             console.log(error)
         }
+    }else{
+     attack.every((card, index) => {
+        console.log(defend[attack.indexOf(card)])
+        console.log(attack.indexOf(card))
+        if (((cardPlayed.value > card.value && cardPlayed.suit === card.suit) || (cardPlayed.suit === trump.suit && card.suit !== trump.suit)) && defend[attack.indexOf(card)] === undefined) {
+
+                cardsInPlay.push(cardPlayed)
+                defend.splice(attack.indexOf(card),1, cardPlayed)
+                document.getElementById(`d${index}`).src = cardPlayed.img
+                player.cards.splice(player.cards.indexOf(cardPlayed), 1)
+                e.target.src = undefined;
+                refreshHand()
+                console.log(`${cardPlayed.value} ${card.value} ${cardPlayed.suit} ${card.suit}`)
+                return false
+        }
+        return true
+     })
+    }
 }
 
     const refreshCards = () => {
         for (let i = 0; i < 6; i++) {
+            attack = [];
             cardsInPlay = [];
+            defend = [];
             document.getElementById(`a${i}`).src = undefined
+            document.getElementById(`d${i}`).src = undefined
             if (player.cards[i] === undefined) {
                 if (deck.length > 0) {
                 player.cards.splice(i, 1, drawCard())
@@ -130,14 +154,16 @@ const Durak = () => {
         }
     }
     const attackButten = () => {
-        if (cardsInPlay.length < 6) {
+        try{
+        if (attack.length < 6) {
         const temp = drawCard()
-        cardsInPlay.push(temp)
-        document.getElementById(`a${cardsInPlay.length-1}`).src = temp.img
         attack.push(temp)
-        console.log(temp)
-        refreshHand()
+        document.getElementById(`a${attack.length-1}`).src = temp.img
+        cardsInPlay.push(temp)  
         }
+    }catch(error){
+        document.getElementById('butten').innerHTML = "outOfCards"
+    }
     }
 
     console.log(player.cards)
@@ -145,24 +171,24 @@ const Durak = () => {
         <div className='container'>
             <h1>help</h1>
             <div className="board">
-                <button className="attack" onClick={() => attackButten()}>attack</button>
+                <button className="attack" onClick={() => attackButten()} id='butten'>attack</button>
             <img src={trump.img} alt="" className="trump"/>
                 <img className='deck' src={cardBack} alt="" onClick={() => refreshCards()} />
                 <div className="attack">
-                    <img className="card" src={cardsInPlay[0]?.img} alt="" id="a0"/>
-                    <img className="card" src={cardsInPlay[1]?.img} alt="" id="a1"/>
-                    <img className="card" src={cardsInPlay[2]?.img} alt="" id="a2"/>
-                    <img className="card" src={cardsInPlay[3]?.img} alt="" id="a3"/>
-                    <img className="card" src={cardsInPlay[4]?.img} alt="" id="a4"/>
-                    <img className="card" src={cardsInPlay[5]?.img} alt="" id="a5"/>
+                    <img className="card" src={attack[0]?.img} alt="" id="a0"/>
+                    <img className="card" src={attack[1]?.img} alt="" id="a1"/>
+                    <img className="card" src={attack[2]?.img} alt="" id="a2"/>
+                    <img className="card" src={attack[3]?.img} alt="" id="a3"/>
+                    <img className="card" src={attack[4]?.img} alt="" id="a4"/>
+                    <img className="card" src={attack[5]?.img} alt="" id="a5"/>
                 </div>
                 <div className="defend">
-                    <img className="card" src={cardsInPlay[0]?.img} alt="" id="d0"/>
-                    <img className="card" src={cardsInPlay[1]?.img} alt="" id="d1"/>
-                    <img className="card" src={cardsInPlay[2]?.img} alt="" id="d2"/>
-                    <img className="card" src={cardsInPlay[3]?.img} alt="" id="d3"/>
-                    <img className="card" src={cardsInPlay[4]?.img} alt="" id="d4"/>
-                    <img className="card" src={cardsInPlay[5]?.img} alt="" id="d5"/>
+                    <img className="card" src={defend[0]?.img} alt="" id="d0"/>
+                    <img className="card" src={defend[1]?.img} alt="" id="d1"/>
+                    <img className="card" src={defend[2]?.img} alt="" id="d2"/>
+                    <img className="card" src={defend[3]?.img} alt="" id="d3"/>
+                    <img className="card" src={defend[4]?.img} alt="" id="d4"/>
+                    <img className="card" src={defend[5]?.img} alt="" id="d5"/>
                 </div>
             </div>
             <div className="Hand">
