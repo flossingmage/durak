@@ -201,7 +201,7 @@ const Durak = () => {
           id="3"
           onClick={(e) => playCard(e, player.cards[3])}
         />
-        <  
+        <img
           className="card"
           src={player.cards[4].img}
           alt=""
