@@ -13,7 +13,7 @@
     height: 150px;
     width: 100px;
 }   
-.Hand{
+.hand{
     position: absolute;
     bottom: 40px;
     left: 470px;
@@ -25,4 +25,15 @@
     height: 150px;
     width: 100px;
     rotate: 90deg;
+}
+.attack{
+    position: absolute;
+    position: absolute;
+    bottom: 240px;
+    left: 470px;
+}
+.defend{
+    position: absolute;
+    bottom: 400px;
+    left: 470px;
 }

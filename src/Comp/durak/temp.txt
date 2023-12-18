@@ -1,0 +1,189 @@
+import React from "react";
+import "./durak.css";
+import cardBack from "../cards/back.png";
+
+const Durak = () => {
+  type card = { suit: string; value: number; img: string };
+  type person = { cards: card[]; name: string };
+  const suits = ["spades", "diamonds", "hearts", "clubs"];
+  const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  const images: string[] = [];
+
+  suits.forEach((suit) => {
+    values.forEach((rank) => {
+      switch (rank) {
+        case 11:
+          images.push(require(`../cards/${suit}_J.png`));
+          break;
+        case 12:
+          images.push(require(`../cards/${suit}_Q.png`));
+          break;
+        case 13:
+          images.push(require(`../cards/${suit}_K.png`));
+          break;
+        case 14:
+          images.push(require(`../cards/${suit}_A.png`));
+          break;
+        default:
+          images.push(require(`../cards/${suit}_${rank}.png`));
+          break;
+      }
+    });
+  });
+
+  const deck: card[] = [];
+  let cardsInPlay: card[] = [];
+  let defend: card[] = [];
+  let attack: card[] = [];
+  const player: person = { cards: [], name: "Kevin" };
+  let attacker = false;
+
+  let i = 0;
+  for (const suit of suits) {
+    for (const value of values) {
+      deck.push({ suit, value, img: images[i] });
+      ++i;
+    }
+  }
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = deck[i];
+    deck[i] = deck[j];
+    deck[j] = temp;
+  }
+  
+  const attackDiv = document.createElement("div");
+  attackDiv.setAttribute("class", "attack");
+  document.body.append(attackDiv);
+
+  const defendDiv = document.createElement("div");
+  defendDiv.setAttribute("class", "defend");
+  document.body.append(defendDiv);
+
+  const handDiv = document.createElement("div");
+  handDiv.setAttribute("class", "hand");
+  document.body.append(handDiv);
+
+
+  const addCardToHand = (card: card) => {
+    const x = document.createElement("IMG");
+    x.setAttribute("src", card.img);
+    x.setAttribute("class", "card");
+    x.setAttribute("id", `${i.toString()}`);
+    x.addEventListener("click", (e) => playCard(e, card));
+    handDiv.append(x);
+    player.cards.push(card);
+  }
+
+  const addCardTODiv = (card: card, div: HTMLDivElement) => {
+    const x = document.createElement("IMG");
+    x.setAttribute("src", card.img);
+    x.setAttribute("class", "card");
+    x.setAttribute("id", `${Array.from(div.toString())[0]}${i.toString()}`);
+    div.append(x);
+  }
+  // this function draws a card from the deck
+  const drawCard = () => {
+    const drawnCard = deck[0];
+    deck.splice(0, 1);
+    console.log("click");
+    return drawnCard;
+  };
+  const trump = drawCard();
+
+  const playCard = (e, cardPlayed: card) => {
+    console.log("attack");
+    if (attacker === true) {
+      try {
+        cardsInPlay.push(cardPlayed);
+        attack.push(cardPlayed);
+        document.getElementById(`a${attack.length - 1}`).src =
+          attack[attack.length - 1].img;
+        player.cards.splice(player.cards.indexOf(cardPlayed), 1);
+        e.target.src = undefined;
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("defend");
+      attack.every((card, index) => {
+        console.log(defend[attack.indexOf(card)]);
+        console.log(attack.indexOf(card));
+        if (
+          ((cardPlayed.value > card.value && cardPlayed.suit === card.suit) ||
+            (cardPlayed.suit === trump.suit && card.suit !== trump.suit)) &&
+          defend[attack.indexOf(card)] === undefined
+        ) {
+          cardsInPlay.push(cardPlayed);
+          addCardTODiv(cardPlayed, attackDiv);
+          player.cards.splice(player.cards.indexOf(cardPlayed), 1);
+          console.log(  
+            `${cardPlayed.value} ${card.value} ${cardPlayed.suit} ${card.suit}`
+          );
+          e.remove()
+          return false;
+        }
+        return true;
+      });
+    }
+  };
+
+  const refreshCards = () => {
+      attack = [];
+      cardsInPlay = [];
+      defend = [];
+      while (player.cards.length < 6) {
+        addCardToHand(drawCard());
+      }
+  };
+  const attackButten = () => {
+    try {
+      if (attack.length < 6) {
+        const temp = drawCard();
+        attack.push(temp);
+        document.getElementById(`a${attack.length - 1}`).src = temp.img;
+        cardsInPlay.push(temp);
+      }
+    } catch (error) {
+      document.getElementById("butten").innerHTML = "outOfCards";
+    }
+  };
+
+  
+  const attackButten2 = () => {
+    if (attack.length < 6) {
+  const x = document.createElement("IMG");
+  const i = drawCard();
+  attack.push(i);
+  cardsInPlay.push(i);
+  x.setAttribute("src", i.img);
+  x.setAttribute("class", "card");
+  x.setAttribute("id", `a${i.toString()}`);
+  attackDiv.append(x);
+  }
+}
+  console.log(player.cards);
+  return (
+    <div className="container">
+      <h1>help</h1>
+      <div className="board">
+        <button className="attackButten" onClick={() => attackButten()} id="butten">
+          attack
+        </button>
+        <button className="attackButten" onClick={() => attackButten2()} id="butten">
+          attack2
+        </button>
+        <img src={trump.img} alt="" className="trump" />
+        <img
+          className="deck"
+          src={cardBack}
+          alt=""
+          onClick={() => refreshCards()}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Durak;
+

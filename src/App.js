@@ -3,9 +3,7 @@ import Durak from "./Comp/durak/durak.tsx";
 
 function App() {
   return (
-    <div>
       <Durak />
-    </div>
   );
 }
 
